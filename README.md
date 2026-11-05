@@ -1,45 +1,83 @@
 # Audio Forensics
 
-Audio Forensics is a Streamlit screening tool for classifying an uploaded speech recording as **REAL** or **FAKE** using a Keras CNN and Mel spectrogram input.
+Audio Forensics is a local Streamlit application for screening speech recordings
+as **REAL** or **FAKE** using a bundled TensorFlow/Keras model and Mel
+spectrograms.
 
-## Features
+> **Important:** This is a demonstration and screening tool, not definitive
+> forensic proof. The bundled model's original training data and validation
+> results are not included, so this project makes no accuracy claim.
 
-- WAV, MP3, and OGG upload with in-app playback.
-- Librosa preprocessing at 16 kHz, mono, and a fixed 3-second window.
-- 128-band Mel spectrogram using `n_fft=2048` and `hop_length=512`.
-- Magma visualization resized to a 128 × 128 RGB model input.
-- Sigmoid prediction, raw fake probability, and confidence score.
-- Downloadable PDF report with the input filename, timestamp, result, raw output, and spectrogram.
-- Exact SHA-256 recognition for the 20 documented demo samples, with the dataset label
-  shown separately from the CNN prediction.
-- Local, portable paths; no external service or network request is required by the app.
+## What the application does
 
-## Technology
+- Accepts WAV, MP3, and OGG audio uploads.
+- Plays the uploaded recording in the browser.
+- Converts audio to mono at 16 kHz.
+- Trims or zero-pads audio to a fixed 3-second window.
+- Generates a 128-band Mel spectrogram using:
+  - `n_fft=2048`
+  - `hop_length=512`
+  - Magma color mapping
+- Resizes the spectrogram to the model's 128 × 128 RGB input.
+- Displays the CNN's raw probability of FAKE and its confidence.
+- Generates a downloadable PDF report containing the filename, timestamp,
+  displayed result, CNN output, label source, and spectrogram.
+- Runs locally; the application does not send uploaded audio to a cloud service.
 
-Python, Streamlit, TensorFlow/Keras, Librosa, NumPy, Matplotlib, Pillow, FPDF2, and scikit-learn.
+## Verified demonstration samples
+
+The repository includes 20 validated WaveFake samples:
+
+```text
+test_audio\
+├── real\
+│   ├── real_01.wav
+│   └── ... real_10.wav
+└── fake\
+    ├── fake_01.wav
+    └── ... fake_10.wav
+```
+
+The original dataset labels are documented in
+[test_audio_sources.txt](test_audio_sources.txt):
+
+- `R` recordings are treated as REAL reference samples.
+- `WF1` recordings are treated as FAKE generated samples.
+- `test_audio_download_metadata.json` stores the SHA-256 values used for exact
+  sample recognition.
+
+When an uploaded file exactly matches one of these unchanged demo files, the
+application displays the verified dataset label and reports the CNN prediction
+separately. This prevents a known demo label from being confused with CNN
+performance. Unknown files use the CNN prediction normally.
+
+Dataset references:
+
+- WaveFake record: https://zenodo.org/records/5642694
+- WaveFake research repository: https://github.com/RUB-SysSec/WaveFake
+- CC BY-SA 4.0: https://creativecommons.org/licenses/by-sa/4.0/
+
+Review the source license and retain attribution before redistributing the
+sample files.
 
 ## Project structure
 
 ```text
-audio_deepfake_ui.py       Streamlit audio analysis application
-cnn_model_smaller.keras    Bundled trained model used by the app
-preprocess_spectrograms.py Portable audio-to-image preprocessing script
-train_cnn_spectrogram.py  Report-aligned CNN training script
-style_all.css              Streamlit theme
+audio_deepfake_ui.py       Active Streamlit audio application
+cnn_model_smaller.keras    Bundled trained CNN model
+style_all.css              Application styling
 requirements.txt           Python dependencies
-test_audio/                10 labeled REAL and 10 labeled FAKE demo samples
-test_audio_sources.txt     Source, license, labels, and validation record
+preprocess_spectrograms.py Portable audio-to-spectrogram converter
+train_cnn_spectrogram.py   Optional report-aligned training script
+test_audio/                10 REAL and 10 FAKE demonstration samples
+test_audio_sources.txt     Sample provenance and validation record
+test_audio_download_metadata.json
+                           Sample labels, hashes, and validation metadata
 ```
-
-The repository does not include the dataset or the original `archive (1)` / `lang` folders mentioned in older documentation. It also does not include a reproducible training split, so no accuracy claim is made here.
-
-The `test_audio` folder contains a small, locally validated WaveFake demonstration
-set: ten `R` reference recordings and ten `WF1` generated recordings. See
-`test_audio_sources.txt` for provenance and license/attribution requirements.
 
 ## Installation on Windows
 
-From PowerShell in this folder:
+Open PowerShell in the project folder:
 
 ```powershell
 python -m venv .venv
@@ -48,7 +86,7 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-If PowerShell blocks activation, run the app with the environment's executable directly:
+If PowerShell activation is restricted, use the environment directly:
 
 ```powershell
 .\.venv\Scripts\python.exe -m streamlit run .\audio_deepfake_ui.py
@@ -60,11 +98,26 @@ If PowerShell blocks activation, run the app with the environment's executable d
 python -m streamlit run .\audio_deepfake_ui.py
 ```
 
-Then open `http://localhost:8501`. The bundled model is loaded once and cached for the Streamlit session.
+Open [http://localhost:8501](http://localhost:8501) in a browser.
 
-## Prepare data and train a new report-aligned model
+## Use the application
 
-Arrange audio into labelled directories. Nested language folders are supported:
+1. Select an audio file or one of the files in `test_audio`.
+2. Press **RUN FORENSIC ANALYSIS**.
+3. Review the generated spectrogram and result.
+4. Check whether the result source is:
+   - **SHA-256 verified dataset label** for an exact known demo sample, or
+   - **CNN model prediction** for an unknown file.
+5. Download the forensic PDF report if needed.
+
+For `fake_05.wav`, the verified display label is **FAKE**, while the report
+also shows the CNN's independent prediction. For `real_08.wav`, the verified
+display label is **REAL**.
+
+## Optional preprocessing and training
+
+The repository does not include the original large training dataset. If you
+have a compatible labelled dataset, arrange it like this:
 
 ```text
 dataset\
@@ -77,26 +130,30 @@ dataset\
         └── fake\
 ```
 
-Convert audio to spectrograms:
+Convert the audio to spectrogram images:
 
 ```powershell
-python .\preprocess_spectrograms.py --input-dir .\dataset --output-dir .\processed_spectrograms
+python .\preprocess_spectrograms.py `
+  --input-dir .\dataset `
+  --output-dir .\processed_spectrograms
 ```
 
-For training, point the script at one directory whose immediate children are `real` and `fake` (for example `processed_spectrograms\english`):
+Train a new report-aligned model from a directory whose immediate children
+are `real` and `fake`:
 
 ```powershell
-python .\train_cnn_spectrogram.py --data-dir .\processed_spectrograms\english --output .\cnn_model_report_aligned.keras
+python .\train_cnn_spectrogram.py `
+  --data-dir .\processed_spectrograms\english `
+  --output .\cnn_model_report_aligned.keras
 ```
 
-The training script defines three convolutional blocks and a 128-unit dense layer, matching the academic specification. The bundled `cnn_model_smaller.keras` predates this script and intentionally remains unchanged.
+The optional training script defines three convolutional blocks and a
+128-unit dense layer. It does not replace the bundled model automatically.
 
-## Limitations
+## Model limitation
 
-- The bundled model is a two-convolution-block model with a 64-unit dense layer, not the report's three-block/128-unit architecture.
-- The model's original training dataset and validation results are not present in this checkout.
-- Predictions are screening results and should not be treated as conclusive forensic proof.
-- For the bundled demo samples only, an exact SHA-256 match selects the verified
-  WaveFake dataset label. This is sample recognition, not evidence that the CNN
-  learned to classify the sample.
-- The active application is the audio-upload workflow; legacy image/SHAP demo artifacts are not included.
+The bundled `cnn_model_smaller.keras` is an existing two-convolution-block
+model with a 64-unit dense layer and one sigmoid output. It is intentionally
+preserved and is not the same architecture as the report-aligned training
+script. Do not interpret the verified demo-label feature as evidence that the
+CNN itself correctly learned every sample.
