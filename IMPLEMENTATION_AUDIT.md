@@ -14,6 +14,7 @@ Compared with the supplied academic project specification and verified against t
 | Confidence score | Already implemented | Kept report formula and displayed percentage/raw output | Direct prediction test |
 | PDF forensic report | Partially implemented | Added filename, timestamp, result, raw output, pipeline notes, and spectrogram | Direct PDF generation test |
 | Streamlit UI | Partially implemented | Reworked layout, status, sidebar, error handling, cached model, and forensic styling | Streamlit HTTP startup test |
+| Verified demo result semantics | Partially implemented | Added distinct verified-demo and AI-model treatments; removed fabricated 100% verified confidence | Browser-tested `fake_05.wav`, `real_08.wav`, and unknown audio |
 | Portable Windows paths | Broken | Replaced hardcoded `G:\...` paths in the active app and pipeline scripts | Code inspection |
 | Dataset | Missing | Documented that the dataset is not included; no data was invented | Directory inspection |
 

@@ -12,6 +12,7 @@ Audio Forensics is a Streamlit screening tool for classifying an uploaded speech
 - Downloadable PDF report with the input filename, timestamp, result, raw output, and spectrogram.
 - Exact SHA-256 recognition for the 20 documented demo samples, with the dataset label
   shown separately from the CNN prediction.
+- Responsive dark forensic UI with verified-demo and AI-model result treatments.
 - Local, portable paths; no external service or network request is required by the app.
 
 ## Technology
@@ -99,6 +100,8 @@ The training script defines three convolutional blocks and a 128-unit dense laye
 - The model's original training dataset and validation results are not present in this checkout.
 - Predictions are screening results and should not be treated as conclusive forensic proof.
 - For the bundled demo samples only, an exact SHA-256 match selects the verified
-  WaveFake dataset label. This is sample recognition, not evidence that the CNN
-  learned to classify the sample.
+  WaveFake dataset label. Verified demo results do not display a fabricated
+  confidence percentage; the CNN's independent prediction and confidence remain
+  visible separately. This is sample recognition, not evidence that the CNN learned
+  to classify the sample.
 - SHAP and the legacy image UI remain available, but SHAP has not been made part of the audio-upload workflow.
