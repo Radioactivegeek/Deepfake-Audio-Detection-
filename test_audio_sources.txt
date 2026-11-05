@@ -1,0 +1,65 @@
+Audio sample source and validation record
+=========================================
+
+Download date: 2026-11-05
+Dataset: WaveFake: A Data Set to Facilitate Audio DeepFake Detection
+Original research dataset: https://zenodo.org/records/5642694
+Original DOI: https://doi.org/10.5281/zenodo.5642694
+Research code: https://github.com/RUB-SysSec/WaveFake
+Accessible row API used for these files:
+https://datasets-server.huggingface.co/first-rows?dataset=ajaykarthick/wavefake-audio&config=default&split=train
+Mirror dataset page: https://huggingface.co/datasets/ajaykarthick/wavefake-audio
+
+The WaveFake labels are not guessed:
+- `R` is the dataset's real/reference recording label.
+- `WF1` is the dataset's first WaveFake generated-system label.
+- Each numbered pair uses the same original utterance ID, with one R and one WF1 file.
+- The source collection is speech data. Validation below confirms decodable,
+  non-silent audio and runs the project's 16 kHz/mono/3-second/Mel pipeline.
+
+License and attribution:
+The original WaveFake Zenodo record describes the dataset under CC BY-SA 4.0.
+Review the current Zenodo record and its LICENSE before redistribution. Credit
+Joel Frank and Lea Schönherr / Ruhr University Bochum and retain the license
+notice. The generated files are research samples; this folder is for
+demonstration/testing and not for commercial redistribution without checking
+the applicable source terms.
+
+Filename    Label  Original ID   Original label  Format     Duration (s)  Sample rate (Hz)  Pipeline
+real_01.wav REAL   LJ001-0001     R               audio/wav  9.66          22050             PASS
+fake_01.wav FAKE   LJ001-0001     WF1             audio/wav  9.66          22050             PASS
+real_02.wav REAL   LJ001-0002     R               audio/wav  1.90          22050             PASS
+fake_02.wav FAKE   LJ001-0002     WF1             audio/wav  1.90          22050             PASS
+real_03.wav REAL   LJ001-0003     R               audio/wav  9.67          22050             PASS
+fake_03.wav FAKE   LJ001-0003     WF1             audio/wav  9.67          22050             PASS
+real_04.wav REAL   LJ001-0004     R               audio/wav  5.14          22050             PASS
+fake_04.wav FAKE   LJ001-0004     WF1             audio/wav  5.14          22050             PASS
+real_05.wav REAL   LJ001-0005     R               audio/wav  8.11          22050             PASS
+fake_05.wav FAKE   LJ001-0005     WF1             audio/wav  8.12          22050             PASS
+real_06.wav REAL   LJ001-0006     R               audio/wav  5.68          22050             PASS
+fake_06.wav FAKE   LJ001-0006     WF1             audio/wav  5.69          22050             PASS
+real_07.wav REAL   LJ001-0007     R               audio/wav  8.39          22050             PASS
+fake_07.wav FAKE   LJ001-0007     WF1             audio/wav  8.39          22050             PASS
+real_08.wav REAL   LJ001-0008     R               audio/wav  1.78          22050             PASS
+fake_08.wav FAKE   LJ001-0008     WF1             audio/wav  1.79          22050             PASS
+real_09.wav REAL   LJ001-0009     R               audio/wav  7.55          22050             PASS
+fake_09.wav FAKE   LJ001-0009     WF1             audio/wav  7.56          22050             PASS
+real_10.wav REAL   LJ001-0010     R               audio/wav  8.82          22050             PASS
+fake_10.wav FAKE   LJ001-0010     WF1             audio/wav  8.82          22050             PASS
+
+Validation:
+- Downloaded and usable: 10 REAL, 10 FAKE, 20 total.
+- Rejected: none.
+- All files were non-empty, decoded with Librosa, finite, longer than 0.5
+  seconds, and not silent/near-silent by RMS/peak checks.
+- All files passed the project's compatibility preprocessing: resampling to
+  16,000 Hz mono, trim/zero-padding to 3 seconds, and 128-band Mel
+  spectrogram generation with n_fft=2048 and hop_length=512.
+- The source dataset identifies these as speech clips; no speech-recognition
+  service was used. The local audio-content check is a technical
+  non-silence/decodability check, not a human transcription.
+- No model predictions or accuracy claims are made by this download step.
+- The application uses the SHA-256 values in `test_audio_download_metadata.json`
+  only to recognize these exact, unchanged demo files. For a known file, the UI
+  displays the verified dataset label and also reports the CNN prediction
+  separately; this must not be interpreted as corrected CNN performance.

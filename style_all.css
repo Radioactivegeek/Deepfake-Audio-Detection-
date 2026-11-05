@@ -1,0 +1,69 @@
+:root {
+    --ink: #eaf2f4;
+    --muted: #9aadb2;
+    --bg: #0c1114;
+    --surface: #141c20;
+    --surface-2: #1a2529;
+    --line: #2a393e;
+    --accent: #55e3c2;
+    --danger: #ff847c;
+}
+
+[data-testid="stAppViewContainer"] {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+[data-testid="stHeader"] { background: transparent; }
+[data-testid="stSidebar"] { background: #10181b; border-right: 1px solid var(--line); }
+[data-testid="stSidebar"] * { color: var(--ink); }
+
+.block-container { max-width: 1180px; padding-top: 3.5rem; padding-bottom: 4rem; }
+.app-kicker, .panel-label {
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+}
+.app-kicker { margin-bottom: 0.75rem; }
+h1 { color: var(--ink) !important; font-size: 2.45rem !important; letter-spacing: -0.04em; line-height: 1.08 !important; max-width: 760px; }
+.lead { color: var(--muted); font-size: 1.05rem; max-width: 680px; margin-bottom: 2.5rem; }
+.panel-label { margin-bottom: 0.75rem; }
+.info-panel, [data-testid="stFileUploaderDropzone"] {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1.25rem;
+}
+.info-panel strong { color: var(--accent); font-size: 1.6rem; }
+.info-panel span { color: var(--muted); line-height: 1.5; }
+[data-testid="stFileUploaderDropzone"] { border-style: dashed; min-height: 150px; }
+[data-testid="stFileUploaderDropzone"] small, [data-testid="stFileUploaderDropzone"] section { color: var(--muted); }
+.stButton > button, .stDownloadButton > button {
+    border-radius: 8px;
+    min-height: 2.8rem;
+    font-weight: 750;
+    letter-spacing: 0.04em;
+}
+.stButton > button[kind="primary"] { background: var(--accent); color: #0b1515; border: 0; }
+.stButton > button[kind="primary"]:hover { background: #8af2da; }
+.result-panel {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1.3rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+.result-panel strong { font-size: 2.4rem; letter-spacing: 0.03em; }
+.result-panel span:last-child { color: var(--muted); }
+.result-real { background: rgba(85, 227, 194, 0.08); border-color: rgba(85, 227, 194, 0.5); }
+.result-real strong { color: var(--accent); }
+.result-fake { background: rgba(255, 132, 124, 0.08); border-color: rgba(255, 132, 124, 0.5); }
+.result-fake strong { color: var(--danger); }
+.result-label { color: var(--muted); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; }
+[data-testid="stMetric"] { background: var(--surface); border: 1px solid var(--line); padding: 0.8rem; border-radius: 8px; }
+img { border-radius: 8px; }
+hr { border-color: var(--line); }

@@ -1,0 +1,9 @@
+streamlit
+tensorflow
+librosa
+matplotlib
+numpy
+pillow
+fpdf2
+scikit-learn
+shap
