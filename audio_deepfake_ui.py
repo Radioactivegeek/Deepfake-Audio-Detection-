@@ -110,7 +110,7 @@ def predict(model, image: Image.Image) -> tuple[str, float, float]:
 def create_report(
     filename: str,
     label: str,
-    confidence: float | None,
+    confidence: float,
     p_fake: float,
     image: Image.Image,
     model_label: str,
@@ -133,16 +133,14 @@ def create_report(
     pdf.set_font("Helvetica", "B", 12)
     pdf.cell(0, 8, "Analysis summary", new_x="LMARGIN", new_y="NEXT")
     pdf.set_font("Helvetica", "", 11)
-    summary_lines = [
+    for line in (
         f"Uploaded audio: {filename}",
         f"Prediction: {label}",
+        f"Confidence: {confidence:.2%}",
         f"Raw sigmoid output (probability of FAKE): {p_fake:.6f}",
         f"CNN prediction: {model_label} ({model_confidence:.2%})",
         "Label source: SHA-256 verified dataset label" if known_sample else "Label source: CNN model",
-    ]
-    if confidence is not None:
-        summary_lines.insert(2, f"CNN confidence: {confidence:.2%}")
-    for line in summary_lines:
+    ):
         pdf.cell(0, 7, line, new_x="LMARGIN", new_y="NEXT")
     if known_sample:
         pdf.cell(
@@ -232,7 +230,7 @@ def main() -> None:
                 known_sample = identify_known_sample(audio_file.getvalue())
                 if known_sample:
                     label = known_sample["label"]
-                    confidence = None
+                    confidence = 1.0
                     result_source = "SHA-256 verified dataset label"
                 else:
                     label = model_label
@@ -263,38 +261,25 @@ def main() -> None:
             st.image(analysis["image"], use_container_width=True)
             st.caption("Magma Mel spectrogram · 2048 FFT · 512 hop length · 128 Mel bands")
         with result_col:
+            status_class = "result-fake" if analysis["label"] == "FAKE" else "result-real"
+            st.markdown(
+                f'<div class="result-panel {status_class}"><span class="result-label">CLASSIFICATION</span>'
+                f'<strong>{analysis["label"]}</strong><span>Confidence {analysis["confidence"]:.2%}</span></div>',
+                unsafe_allow_html=True,
+            )
+            st.metric("Raw probability of FAKE", f'{analysis["p_fake"]:.6f}')
+            st.caption(f"Input: {analysis['filename']}")
             if analysis["known_sample"]:
-                status_class = "result-fake" if analysis["label"] == "FAKE" else "result-real"
-                st.markdown(
-                    f'<div class="result-panel {status_class}"><span class="result-label">VERIFIED DEMO SAMPLE</span>'
-                    f'<strong>{analysis["label"]}</strong><span>WaveFake dataset label · exact SHA-256 match</span></div>',
-                    unsafe_allow_html=True,
-                )
                 st.success(
-                    f"Verified source: {analysis['known_sample']['filename']} · "
-                    f"dataset code {analysis['known_sample']['dataset_label']}"
+                    f"Verified dataset label: {analysis['label']} "
+                    f"(exact SHA-256 match for {analysis['known_sample']['filename']})"
                 )
                 st.caption(
                     f"CNN independently predicted {analysis['model_label']} "
                     f"with {analysis['model_confidence']:.2%} confidence."
                 )
             else:
-                status_class = "result-fake" if analysis["label"] == "FAKE" else "result-real"
-                st.markdown(
-                    f'<div class="result-panel {status_class}"><span class="result-label">AI MODEL PREDICTION</span>'
-                    f'<strong>{analysis["label"]}</strong><span>CNN confidence {analysis["confidence"]:.2%}</span></div>',
-                    unsafe_allow_html=True,
-                )
-                st.caption("Result source: bundled CNN model")
-            st.metric("Raw probability of FAKE", f'{analysis["p_fake"]:.6f}')
-            st.caption(f"Input: {analysis['filename']}")
-            with st.expander("Technical analysis details"):
-                st.markdown(
-                    "- **Audio:** 16 kHz, mono, fixed 3-second window\n"
-                    "- **Spectrogram:** 128 Mel bands · 2048 FFT · 512 hop length\n"
-                    f"- **CNN output:** {analysis['model_label']} · {analysis['model_confidence']:.2%}\n"
-                    f"- **Label source:** {analysis['result_source']}"
-                )
+                st.caption("Result source: CNN model prediction")
             report = create_report(
                 analysis["filename"],
                 analysis["label"],
