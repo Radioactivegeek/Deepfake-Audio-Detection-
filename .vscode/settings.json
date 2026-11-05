@@ -1,8 +1,0 @@
-{
-    "chat.tools.terminal.autoApprove": {
-        "/^python -m pip install tensorflow librosa fpdf2 shap$/": {
-            "approve": true,
-            "matchCommandLine": true
-        }
-    }
-}

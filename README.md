@@ -22,7 +22,6 @@ Python, Streamlit, TensorFlow/Keras, Librosa, NumPy, Matplotlib, Pillow, FPDF2, 
 
 ```text
 audio_deepfake_ui.py       Streamlit audio analysis application
-image_ui.py                Legacy spectrogram-image application
 cnn_model_smaller.keras    Bundled trained model used by the app
 preprocess_spectrograms.py Portable audio-to-image preprocessing script
 train_cnn_spectrogram.py  Report-aligned CNN training script
@@ -100,4 +99,4 @@ The training script defines three convolutional blocks and a 128-unit dense laye
 - For the bundled demo samples only, an exact SHA-256 match selects the verified
   WaveFake dataset label. This is sample recognition, not evidence that the CNN
   learned to classify the sample.
-- SHAP and the legacy image UI remain available, but SHAP has not been made part of the audio-upload workflow.
+- The active application is the audio-upload workflow; legacy image/SHAP demo artifacts are not included.
